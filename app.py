@@ -40,9 +40,12 @@ model, features = load_model()
 def predict_power(irradiation, ambient, is_plant2):
     """Aik inverter ki AC power (kW). Temperature training range mein clip hota hai,
     aur dhoop 0 ho to power 0."""
-    irr = np.atleast_1d(np.asarray(irradiation, dtype=float))
-    amb = np.broadcast_to(np.asarray(ambient, dtype=float), irr.shape).copy()
-    plant = np.broadcast_to(np.asarray(is_plant2, dtype=float), irr.shape).copy()
+    irr, amb, plant = np.broadcast_arrays(
+        np.atleast_1d(np.asarray(irradiation, dtype=float)),
+        np.atleast_1d(np.asarray(ambient, dtype=float)),
+        np.atleast_1d(np.asarray(is_plant2, dtype=float)),
+    )
+    irr, amb, plant = irr.copy(), amb.copy(), plant.copy()
     X = pd.DataFrame(
         {
             "IRRADIATION": np.clip(irr, 0, None),
